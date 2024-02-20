@@ -48,7 +48,8 @@ export const getEventById = async (eventId:string) => {
 }
 
 export const getAllEvents = async ({query,limit=6,page,category}:GetAllEventsParams) => {
-    try {
+  console.log("get all event called now") 
+  try {
         await connectToDatabase();
         const conditions = {}
         const eventsQuery = Event.find(conditions)
