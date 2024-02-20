@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
  
 export async function POST(req: Request) {
  
+  console.log("here now")
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
  
@@ -55,6 +56,8 @@ export async function POST(req: Request) {
   if(eventType === "user.created") 
   {
     const {id,email_addresses,image_url,first_name,last_name,username} = evt.data;
+    console.log(evt?.data,"See all data now")
+    
     const user = {
       clerkId:id,
       email:email_addresses[0].email_address,
