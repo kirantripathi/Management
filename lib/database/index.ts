@@ -13,15 +13,19 @@ export const connectToDatabase = async () => {
 
     if(!MONGODB_URI) throw new Error("MONGODB_URI is missing")
 
-    cached.promise= cached.promise || mongoose.connect(MONGODB_URI, {
-        dbName:"evently",
-        bufferCommands:false
+    try {
+        cached.promise = cached.promise || mongoose.connect(MONGODB_URI, {
+            dbName: 'evently',
+            bufferCommands: true // Adjust as needed
+        });
 
-    }) 
-
-    cached.conn =await cached.promise;
- 
-    return cached.conn;
+        cached.conn = await cached.promise;
+        console.log('Connected to MongoDB');
+        return cached.conn;
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        throw error;
+    }
 };
 
 
