@@ -42,7 +42,7 @@ const Checkout = ({event,userId}:checkoutEventProps) => {
             buyerId: userId
           }
 
-          checkoutOrder(order);
+          // checkoutOrder(order);
         
     }
 
