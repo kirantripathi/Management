@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       createdAt: new Date(),
     }
 
+    console.log(order,"see insode stripe api")
     const newOrder = await createOrder(order)
     return NextResponse.json({ message: 'OK', order: newOrder })
   }
