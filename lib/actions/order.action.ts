@@ -64,7 +64,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
   }
 
   // GET ORDERS BY EVENT
-export async function getOrdersByEvent({ searchString="see", eventId }: GetOrdersByEventParams) {
+export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEventParams) {
   try {
     await connectToDatabase()
 
