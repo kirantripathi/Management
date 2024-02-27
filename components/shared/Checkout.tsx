@@ -17,7 +17,6 @@ type checkoutEventProps = {
   ) ;
 
 
-
 const Checkout = ({event,userId}:checkoutEventProps) => {
 
     React.useEffect(() => {
@@ -42,7 +41,7 @@ const Checkout = ({event,userId}:checkoutEventProps) => {
             buyerId: userId
           }
 
-          // checkoutOrder(order);
+          checkoutOrder(order);
         
     }
 

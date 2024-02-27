@@ -9,6 +9,12 @@ import Category from "../database/model/category.model"
 import { revalidatePath } from "next/cache"
 
 
+const getCategoryByName = async (name: string) => {
+  //caase insensitive matching is done as $options:"i" make it possible
+
+  return Category.findOne({ name: { $regex: name, $options: 'i' } })
+}
+
 const populateEvent = (query: any) => {
     return query
       .populate({ path: 'organizer', model: User, select: '_id firstName lastName' })
@@ -51,10 +57,17 @@ export const getAllEvents = async ({query,limit=6,page,category}:GetAllEventsPar
    
   try {
         await connectToDatabase();
-        const conditions = {}
+        const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
+        const categoryCondition = category ? await getCategoryByName(category) : null
+        const conditions = {
+          $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
+        }
+        //condition checks for both tilecondition and category condition.
+        //if category condition exist it search for categoryCondition._id otherwise just with title condition
+        const skipAmount = (Number(page) - 1) * limit
         const eventsQuery = Event.find(conditions)
         .sort({createdA:"desc"})
-        .skip(0)
+        .skip(skipAmount)
         .limit(limit);
         const events= await populateEvent(eventsQuery);
         const eventsCount = await Event.countDocuments(conditions);

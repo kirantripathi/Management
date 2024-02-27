@@ -1,5 +1,6 @@
 import { IEvent } from "@/lib/database/model/event.model"
 import Card from "./Card"
+import Pagination from "./Pagination"
 
 
 
@@ -19,11 +20,12 @@ const Collection = ({
     emptyTitle,
     emptyStateSubtext,
     page,
-    totalPages,
+    totalPages=0,
     collectionType,
     limit,
     urlParamName,
 }:CollectionProps) => {
+  
   return (
     <>
     {
@@ -44,6 +46,10 @@ const Collection = ({
             })
           }
           </ul>
+         {
+          totalPages >1  &&  <Pagination urlParamName={urlParamName} page={page} totalPages={totalPages} />
+
+         }
         </div>
       )
      
