@@ -24,9 +24,7 @@ const  Home = async ({searchParams}:SearchParamProps) => {
  });
  
 
- console.log(events,"see the")
 
- console.log(searchText,category,page,"See all home")
 
   return (
   <>
