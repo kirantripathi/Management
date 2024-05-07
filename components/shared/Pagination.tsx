@@ -27,6 +27,7 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
           value: pageValue.toString(),
         })
     
+       
         router.push(newUrl, {scroll: false})
       }
 
