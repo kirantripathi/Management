@@ -121,6 +121,8 @@ export async function POST(req: Request) {
 
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+ 
+
 
   if (!WEBHOOK_SECRET) {
     throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
@@ -132,16 +134,27 @@ export async function POST(req: Request) {
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
 
+
+
+
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occured -- no svix headers', {
+    return new Response('no svix headers error', {
       status: 400
     })
   }
 
+
+
+ 
+
   // Get the body
   const payload = await req.json()
+
+
   const body = JSON.stringify(payload);
+
+
 
   // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET);
@@ -156,8 +169,8 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent
   } catch (err) {
-    console.error('Error verifying webhook:', err);
-    return new Response('Error occured', {
+    console.log(err,"See erro too")
+    return new Response('wh verify Error occured', {
       status: 400
     })
   }

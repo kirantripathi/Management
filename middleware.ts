@@ -5,11 +5,11 @@ export default authMiddleware({
     publicRoutes: [
         "/", 
         "/events/:id",
-        "/api/webhook/clerk",
+        // "/api/webhook/clerk",
         "/api/webhook/stripe",
         "/api/uploadthing",
         // this one is for our webhook for clerk auth
-        "/api/webhook(.*)"
+        // "/api/webhook(.*)"
 
     ],
 
@@ -18,10 +18,11 @@ export default authMiddleware({
 //For improved performance, these routes should be skipped using the default config.matcher instead.
 
     ignoredRoutes:[
-        "/api/webhook/clerk",
+        "/api/webhooks(.*)",
+        // "/api/webhook/clerk",
         "/api/webhook/stripe",
         "/api/uploadthing",
-        "/api/webhooks(.*)"
+      
     ]
 });
 
