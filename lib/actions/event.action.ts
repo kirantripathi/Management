@@ -1,5 +1,6 @@
 "use server"
 
+import { promises as fs } from 'fs';
 import { CreateEventParams, DeleteEventParams, GetAllEventsParams, GetEventsByUserParams, GetRelatedEventsByCategoryParams, UpdateEventParams } from "@/types"
 import { handleError } from "../utils"
 import { connectToDatabase } from "../database"
@@ -7,6 +8,12 @@ import User from "../database/model/users.model"
 import Event from "../database/model/event.model"
 import Category from "../database/model/category.model"
 import { revalidatePath } from "next/cache"
+
+
+
+
+
+
 
 
 const getCategoryByName = async (name: string) => {
@@ -25,6 +32,10 @@ export const createEvent = async ({event,userId,path}:CreateEventParams) => {
 
     try {
     
+
+      // const result = await cloudinary.uploader.upload(event.imageUrl);
+      // console.log(result,"See the result plz")
+    
         await connectToDatabase();
         //find the organizer of the event
         const organizer = await User.findById(userId);
@@ -34,6 +45,8 @@ export const createEvent = async ({event,userId,path}:CreateEventParams) => {
             const newEvent = await Event.create({...event,category:event.categoryId,organizer:userId})
             // revalidatePath(path)
             return JSON.parse(JSON.stringify(newEvent))
+
+       
     }
     catch(error) {
         handleError(error);

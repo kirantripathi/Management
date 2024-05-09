@@ -36,7 +36,7 @@ const EventSchema = new Schema({
     },
     imageUrl:{
         type:String,
-        required:true,
+       
     },
     startDateTime:{
         type:Date,

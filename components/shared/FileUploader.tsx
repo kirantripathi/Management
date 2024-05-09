@@ -5,6 +5,7 @@ import { useDropzone } from "@uploadthing/react";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { Button } from '@/components/ui/button'
 import { convertFileToUrl } from '@/lib/utils'
+import { convertImage } from '@/lib/actions/imageconvert.action';
 
  
 
@@ -19,9 +20,15 @@ const FileUploader = ({ onFieldChange, imageUrl,setFiles}: FileUploaderProps) =>
     //once we select a file it comes on onDrop
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
-    //now changing the field on the form too so we can get imageUrl
+    // //now changing the field on the form too so we can get imageUrl
 
-    onFieldChange(convertFileToUrl(acceptedFiles[0]))
+     
+    
+
+     onFieldChange(convertFileToUrl(acceptedFiles[0]))
+
+
+
   }, []);
  
 

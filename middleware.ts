@@ -5,11 +5,11 @@ export default authMiddleware({
     publicRoutes: [
         "/", 
         "/events/:id",
-        // "/api/webhook/clerk",
-        "/api/webhook/stripe",
+        "/api/webhooks/clerk",
+        "/api/webhooks/stripe",
         "/api/uploadthing",
         // this one is for our webhook for clerk auth
-        // "/api/webhook(.*)"
+        // "/api/webhooks(.*)"
 
     ],
 
@@ -18,9 +18,9 @@ export default authMiddleware({
 //For improved performance, these routes should be skipped using the default config.matcher instead.
 
     ignoredRoutes:[
-        "/api/webhooks(.*)",
-        // "/api/webhook/clerk",
-        "/api/webhook/stripe",
+        // "/api/webhooks(.*)",
+        "/api/webhooks/clerk",
+        "/api/webhooks/stripe",
         "/api/uploadthing",
       
     ]
@@ -33,3 +33,32 @@ export default authMiddleware({
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
+
+
+
+// import { authMiddleware } from "@clerk/nextjs";
+ 
+// export default authMiddleware({
+
+
+//   ignoredRoutes: [
+//     '/api/webhooks/clerk',
+//     '/api/webhooks/stripe',
+//     '/api/uploadthing'
+//   ],
+
+//   publicRoutes: [
+//     '/',
+//     '/events/:id',
+//     '/api/webhooks/clerk',
+//     '/api/webhooks/stripe',
+//     '/api/uploadthing'
+//   ],
+
+// });
+ 
+// export const config = {
+//   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+// };
+
+

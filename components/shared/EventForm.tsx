@@ -36,6 +36,7 @@ import {useUploadThing} from "@/lib/uploadthing"
 import { useRouter } from "next/navigation"
 import { createEvent, updateEvent } from "@/lib/actions/event.action"
 import { IEvent } from "@/lib/database/model/event.model"
+import { convertImage } from "@/lib/actions/imageconvert.action"
 
 
 type EventFormProps = {
@@ -50,10 +51,14 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
   const [files,setFiles] = useState<File[]>([]);
  
+ console.log(event,"See event plz")
+ 
+
   const initialState= event && type==='Update' ? {
     ...event,
     startDateTime: new Date(event.startDateTime), 
-    endDateTime: new Date(event.endDateTime) 
+    endDateTime: new Date(event.endDateTime) ,
+    categoryId:event?.category?._id,
   } : eventDefaultValues;
 
   const router= useRouter();
@@ -65,22 +70,50 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
     defaultValues: initialState
   })
 
+  const toBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+  
+      fileReader.readAsDataURL(file);
+  
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+  
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   async function onSubmit(data: z.infer<typeof eventFormSchema>) {
-  console.log(data,"see submit data")
-  let uploadedImageUrl = data.imageUrl;
+
+
+    let event = {...data};
+    let imageURL;
+    if(files.length > 0) {
+      const base64 = await toBase64(files[0] as File);
+      imageURL  = await convertImage(base64) 
+      event={...data,imageUrl:imageURL} 
+    }
+
+  
+
   //as we can choose multiple files, we need to upload all the chossen one
-  if(files.length > 0) {
-      const uploadedImages = await startUpload(files);
-      if(!uploadedImages) {
-        return
-      }
-      uploadedImageUrl = uploadedImages[0].url
-  }
+  // if(files.length > 0) {
+  //     const uploadedImages = await startUpload(files);
+  //     if(!uploadedImages) {
+  //       return
+  //     }
+  //     uploadedImageUrl = uploadedImages[0].url
+  // }
 
   if(type==="Create") {
+
+    
     try {
       const newEvent = await createEvent({
-        event:{...data,imageUrl:uploadedImageUrl},
+        event:event,
         userId,
         path:"/profile" 
         //where to redirect user after creating event
@@ -107,7 +140,7 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
     try {
       const updatedEvent = await updateEvent({
         userId,
-        event: { ...data, imageUrl: uploadedImageUrl, _id: eventId },
+        event: { ...event, _id: eventId },
         path: `/events/${eventId}`
       })
 
@@ -379,9 +412,10 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
         className="button col-span-2 w-full"
         type="submit"
         >
-          {
+           {
            form.formState.isSubmitting ? "Submitting..."  : `${type} Event`
-          }
+          } 
+      
           </Button>
       </form>
     </Form>

@@ -30,6 +30,8 @@ export const createUser = async (user:CreateUserParams) =>
       
           const updatedUser = await User.findOneAndUpdate({ clerkId }, user, { new: true })
       
+        
+
           if (!updatedUser) throw new Error('User update failed')
           return JSON.parse(JSON.stringify(updatedUser))
         } catch (error) {
@@ -43,8 +45,11 @@ export const createUser = async (user:CreateUserParams) =>
       
           // Find user to delete
           const userToDelete = await User.findOne({ clerkId })
-      
+       
+         
+
           if (!userToDelete) {
+          
             throw new Error('User not found')
           }
       
