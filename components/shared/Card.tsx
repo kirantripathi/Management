@@ -16,12 +16,13 @@ type CardProps = {
 
 const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
   const { sessionClaims } = auth();
-  const userId = sessionClaims?.userId as string;
+  const userId = sessionClaims?.userId as {userId:string};
 
-  const isEventCreator = userId === (event?.organizer && event.organizer?._id.toString());
+  const isEventCreator = (userId?.userId === (event?.organizer && event.organizer?._id.toString()));
 
-     console.log(userId,"see u id")
-     console.log(event,"See eveant val")
+  
+
+
 
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
@@ -34,7 +35,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
       
       {/* IS EVENT CREATOR ... */}
 
-      {!isEventCreator && !hidePrice && (
+      {isEventCreator  && (
         <div className="absolute right-2 top-2 flex flex-col gap-4 rounded-xl bg-white p-3 shadow-sm transition-all">
           <Link href={`/events/${event._id}/update`}>
             <Image src="/assets/icons/edit.svg" alt="edit" width={20} height={20} />

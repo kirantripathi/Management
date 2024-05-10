@@ -1,6 +1,6 @@
 
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -51,7 +51,7 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
   const [files,setFiles] = useState<File[]>([]);
  
- console.log(event,"See event plz")
+
  
 
   const initialState= event && type==='Update' ? {
@@ -70,47 +70,46 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
     defaultValues: initialState
   })
 
-  const toBase64 = (file: File) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-  
-      fileReader.readAsDataURL(file);
-  
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-  
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+
+
+ 
 
   async function onSubmit(data: z.infer<typeof eventFormSchema>) {
-
-
     let event = {...data};
-    let imageURL;
     if(files.length > 0) {
-      const base64 = await toBase64(files[0] as File);
-      imageURL  = await convertImage(base64) 
-      event={...data,imageUrl:imageURL} 
+      const data = new FormData();
+      data.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_UPLOAD_PRESET_NAME ?? ""
+      );
+      data.append("cloud_name", process.env.NEXT_PUBLIC_CLOUD_NAME ?? "");
+    data.append("file", files[0]);
+    data.append("folder", "event-image");
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const res = await response.json(); // Parse JSON response
+    const secureUrl = res["secure_url"]; 
+    
+      event={...event,imageUrl:secureUrl}
+
+    } catch (error) {
+      console.log(error,"See the error too")
+     toast.error("Failed to upload image")
+    }
+ 
     }
 
   
 
-  //as we can choose multiple files, we need to upload all the chossen one
-  // if(files.length > 0) {
-  //     const uploadedImages = await startUpload(files);
-  //     if(!uploadedImages) {
-  //       return
-  //     }
-  //     uploadedImageUrl = uploadedImages[0].url
-  // }
 
-  if(type==="Create") {
-
-    
+  if(type==="Create") {    
     try {
       const newEvent = await createEvent({
         event:event,
@@ -121,19 +120,18 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
 
       if(newEvent) {
-        form.reset();
         toast.success("New Event has Been created")
+        form.reset();
         router.push(`/events/${newEvent._id}`)
       }
 
     }
+
+    
     catch (error:unknown) {
     
         console.log(error,"see error while creating event")
-
-        if (error instanceof Error) {
-          toast.error(error.toString())
-      }
+        toast.error("Failed to Create Event")
     }
   }
 
@@ -156,10 +154,8 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
         router.push(`/events/${updatedEvent._id}`)
       }
     } catch (error:unknown) {
-      console.log(error);
-      if (error instanceof Error) {
-        toast.error(error.toString())
-    }
+      console.log(error,"See error type");
+      toast.error("Failed to update Event")
     }
   }
 
@@ -167,7 +163,7 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
   return (
     <Form {...form}>
-      <form 
+      <form  
       onSubmit={form.handleSubmit(onSubmit)} 
       className="flex flex-col gap-5"
       >

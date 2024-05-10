@@ -125,6 +125,7 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
   
       return JSON.parse(JSON.stringify(updatedEvent))
     } catch (error) {
+      console.log(error,"see error in update appi")
       handleError(error)
     }
   }

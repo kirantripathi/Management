@@ -10,9 +10,27 @@ cloudinary.config({
   })
 
 
-export const  convertImage = async (base64:any) => {
+  const toBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+  
+      fileReader.readAsDataURL(file);
+  
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+  
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+
+export const  convertImage = async (file:File) => {
+  const base64 = await toBase64(file as File) as string;
+  console.log(base64,"in omage converted")
 const uploadResponse = await cloudinary.uploader.upload(base64);
-console.log(uploadResponse,"See the response")
 return uploadResponse.url;
 }
 
