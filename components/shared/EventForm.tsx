@@ -4,7 +4,7 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { format } from "date-fns"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -122,12 +122,18 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
       if(newEvent) {
         form.reset();
+        toast.success("New Event has Been created")
         router.push(`/events/${newEvent._id}`)
       }
 
     }
-    catch (error) {
+    catch (error:unknown) {
+    
         console.log(error,"see error while creating event")
+
+        if (error instanceof Error) {
+          toast.error(error.toString())
+      }
     }
   }
 
@@ -146,10 +152,14 @@ const EventForm = ({userId,type,event,eventId}:EventFormProps) => {
 
       if(updatedEvent) {
         form.reset();
+        toast.success(" Event has Been Successfully Updated")
         router.push(`/events/${updatedEvent._id}`)
       }
-    } catch (error) {
+    } catch (error:unknown) {
       console.log(error);
+      if (error instanceof Error) {
+        toast.error(error.toString())
+    }
     }
   }
 
